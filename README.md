@@ -75,8 +75,8 @@ CHAIN=hyperevm  ENDPOINT=/public/x402/hyperevm/snapshot PAY_WITH=susdp bun start
 | `GET /public/x402/base/snapshot` | Protocol snapshot (TVL, supplies, APY) | USDp, USDC, sUSDp |
 | `GET /public/x402/base/quote?operation=<mint\|redeem>&collateral=<usds\|susds\|usdc>&amount=<n>` | Mint/redeem quote | USDp |
 | `GET /public/x402/base/savings` | Savings vault stats | sUSDp |
-| `GET /public/x402/base/fees` | Mint/redeem fee schedule | USDC |
-| `GET /public/x402/base/backing` | Collateral backing basket | USDS |
+| `GET /public/x402/base/fees` | Round-trip conversion fee per collateral | USDC |
+| `GET /public/x402/base/solvency` | Proof of solvency (reserves vs supply) | USDS |
 | `GET /public/x402/avalanche/snapshot` | Same snapshot, settled on **Avalanche** | USDp, USDC, sUSDp |
 | `GET /public/x402/hyperevm/snapshot` | Same snapshot, settled on **HyperEVM** | USDp, sUSDp |
 
@@ -96,7 +96,7 @@ Note: `/quote` requires its query parameters — calling it without them returns
 |---|---|---|
 | `AGENT_PRIVATE_KEY` | *(required)* | The agent's wallet. Use a dedicated wallet with small funds. |
 | `MAX_AMOUNT` | `1` | Hard spend cap per request — invoices above it are refused before signing. |
-| `MERCHANT_URL` | `http://localhost:4000` | The x402-enabled API to call. |
+| `MERCHANT_URL` | `https://api.parallel.best` | The x402-enabled API to call. |
 | `ENDPOINT` | `/public/x402/base/snapshot` | The paid route. |
 | `CHAIN` | `base` | `base`, `avalanche`, `hyperevm` or `ethereum`. |
 | `PAY_WITH` | *(auto)* | Force a token (`usdp`, `usdc`, `susdp`). Omitted, the agent picks from its balances. |
@@ -106,7 +106,7 @@ Note: `/quote` requires its query parameters — calling it without them returns
 - **Nothing moves without a signature.** Every refusal path (`🛡️ Refused`) happens *before* signing — a refused invoice costs nothing.
 - **`MAX_AMOUNT` is enforced client-side** against the invoice's own decimals from a verified token catalog: a merchant cannot re-scale amounts or trick the agent into overpaying.
 - **Chain is pinned.** An invoice for a different chain than the one you configured is rejected (`CHAIN_MISMATCH`).
-- The private key never leaves your machine; the signature authorizes exactly one transfer, to one recipient, within a time window.
+- **The agent never configures who it pays.** Each 402 invoice carries the merchant's receiving address (`payTo`); the signature authorizes exactly one transfer — to that recipient, for that amount, within a time window.
 
 ## Troubleshooting
 
