@@ -27,7 +27,7 @@ export const config = {
 	/** The agent's public address, derived locally from the key. */
 	agentAddress: account.address,
 	/** The x402-enabled API to call. */
-	merchantUrl: process.env.MERCHANT_URL ?? "http://localhost:4000",
+	merchantUrl: process.env.MERCHANT_URL ?? "https://api.parallel.best",
 	/** The paid route, query string included if the route takes parameters. */
 	endpoint: process.env.ENDPOINT ?? "/public/x402/base/snapshot",
 	/** Chain to pay on — invoices for any other chain are refused. */
