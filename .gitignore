@@ -9,7 +9,7 @@ public/
 # Generated files
 generated/
 
-# Prisma
+# TypeScript
 *.tsbuildinfo
 
 # Environment variables
