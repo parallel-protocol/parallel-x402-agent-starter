@@ -122,6 +122,8 @@ Every `🛡️ Refused` happens **before** anything is signed — a refusal neve
 | `ENGINE_FAILED` | Payment preparation failed; the message carries the cause | Usually a balance issue (fund the wallet) or a transient RPC error (retry) |
 | `ENGINE_TIMEOUT` | Payment preparation exceeded its time budget | Retry — if it persists, check your network |
 
+A `❌ PAYMENT_REFUSED` or `❌ SETTLEMENT_FAILED` comes after the paid request: the merchant answered it with `402`, and the code in brackets is its reason. With some reasons the payment may still settle, and the message then says to check with the merchant before paying again. The [error codes](https://docs.parallel.best/agents/x402/error-codes) list every reason.
+
 A `❌ 4xx/5xx` after `✅ Paid` never happens for the payment itself: the merchant only settles the payment when it successfully serves the response. An API error before that (e.g. a 400 on missing query parameters) means nothing was settled and nothing was spent.
 
 ## Project layout

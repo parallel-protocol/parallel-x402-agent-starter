@@ -312,10 +312,23 @@ function methodName(input: Hex): string {
 
 /**
  * Payer-guard refusals happen BEFORE anything is signed: a refused invoice
- * costs nothing. Anything else is unexpected and rethrown.
+ * costs nothing. PAYMENT_REFUSED and SETTLEMENT_FAILED come AFTER the paid
+ * request: the merchant answered it with 402, and `reason` says why. Anything
+ * else is unexpected and rethrown.
  */
 export function showRefusal(error: unknown): never {
 	if (error instanceof X402FetchError) {
+		if (
+			error.code === "PAYMENT_REFUSED" ||
+			error.code === "SETTLEMENT_FAILED"
+		) {
+			console.error(
+				`❌  ${error.code} [${error.reason ?? "UNKNOWN"}]: ${error.message}`,
+			);
+			if (error.retryAfter)
+				console.error(`    retry after: ${error.retryAfter}`);
+			process.exit(1);
+		}
 		console.error(`🛡️   Refused [${error.code}]: ${error.message}`);
 		if (error.engineCode) console.error(`    engine: ${error.engineCode}`);
 		if (error.hint) console.error(`    hint: ${error.hint}`);
